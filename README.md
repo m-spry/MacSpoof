@@ -4,4 +4,4 @@ I made this in about 20 minutes using AppleScript while eating lunch, its purpos
 
 DISCLAIMER: The work is provided “as is”, without warranty or support, express or implied. The author(s) are not liable for any damages, misuse, or other claim, whether from or as a consequence of usage of the given work. This tool was created to use as an additional privacy of the user whilst roaming unsecure networks and for educational/experimental purposes.
 
-This software is licenced to you using the VisualIdiot ☺ Licence found here
+This software is licenced to you using the VisualIdiot ☺ Licence found here (licence.visualidiot.com)
