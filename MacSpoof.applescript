@@ -1,8 +1,12 @@
-(* Mac Address Spoofer v0.6, 
+(* Mac Address Spoofer v0.7, 
 an automated mac spoofer that uses built in OS X terminal commands 
 
 Changelog
 -----------
+0.7
+- Saves a copy of your original Mac Address in a preference file, for backup purposes.
+- If selected it can now randomize your Mac Address on boot up.
+
 0.6.1
 - Fixed issue where Mac Address may not change because Terminal wasn't selected (Removed tell Terminal)
 - Run the terminal command a couple more times, this will ensure the address will change.
