@@ -3,8 +3,9 @@ an automated mac spoofer that uses built in OS X terminal commands
 
 Changelog
 -----------
-0.6
+0.6.1
 - Fixed issue where Mac Address may not change because Terminal wasn't selected (Removed tell Terminal)
+- Run the terminal command a couple more times, this will ensure the address will change.
 
 0.5
 - Bit of Clean up and Organization of script source
@@ -41,7 +42,6 @@ http://licence.visualidiot.com
 Basically, you’re free to do what you want with it; as long as you do something good (help someone out, smile; just be nice), you can use this on anything you fancy. Of course, if it all breaks, it’s totally not the author’s fault. Enjoy!
 
 *)
-
 display dialog "The work is provided “as is”, without warranty or support, express or implied. The author(s) are not liable for any damages, misuse, or other claim, whether from or as a consequence of usage of the given work." & return & return & "Tested with OS X versions: 10.7 - 10.9 DP" & return & "With that said press OK to agree and continue" with title "Disclaimer: For legal reasons I have to put this here" with icon caution
 
 if button returned of (display dialog "Choose which Mac Address you would like to change" buttons {"Wi-Fi", "Ethernet"} with title "MacSpoof") is "Wi-Fi" then
@@ -75,6 +75,9 @@ if button returned of (display dialog "Choose how you would like to change your 
 	
 	(* Where the magic happens *)
 	do shell script "sudo ifconfig " & network & " ether " & randomizer_result & "" with administrator privileges
+	(* Run twice more to ensure it changes *)
+	do shell script "sudo ifconfig " & network & " ether " & randomizer_result & "" with administrator privileges
+	do shell script "sudo ifconfig " & network & " ether " & randomizer_result & "" with administrator privileges
 	
 	(* Confirmation of Change *)
 	display dialog "Done! Your new " & networkChoice & " Mac Address is " & randomizer_result & return & return & "Please keep in mind that this is not an permanent change and will revert to your original Mac Address on reboot." with title "MacSpoof" buttons ("OK, Exit now")
@@ -88,6 +91,9 @@ else
 	display dialog "Your Mac Address will be changed to " & MacAddress_Choice & return & return & "Press OK to continue or cancel to quit." & return & "You will be prompted for your password to make changes." with title "Confirmation"
 	
 	(* Where the magic happens *)
+	do shell script "sudo ifconfig " & network & " ether " & MacAddress_Choice with administrator privileges
+	(* Run twice more to ensure it changes *)
+	do shell script "sudo ifconfig " & network & " ether " & MacAddress_Choice with administrator privileges
 	do shell script "sudo ifconfig " & network & " ether " & MacAddress_Choice with administrator privileges
 	
 	(* Confirmation of Change *)
