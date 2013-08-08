@@ -8,6 +8,9 @@ http://www.mspry.me/
 set changelog to "MacSpoof Changelog
 --------------------------------------------
 
+0.7.1 fixed.
+- Fixed a small mess up...
+
 0.7.1
 Once randomize on boot is finished I'll will call this app a complete version 1.0
 - A bit of house keeping and clean up of previous changes
@@ -77,19 +80,6 @@ on checkFirstRun()
 end checkFirstRun
 
 # The script starts Here
-set currentVersion to do shell script "defaults read me.mspry.MacSpoof LastConfigVersionUpdate"
-if (currentVersion = latestVersion) then
-	# Do Nothing
-else
-	tell application "TextEdit"
-		activate
-		set NewDoc to make new document
-		set text of NewDoc to changelog
-	end tell
-	try
-		do shell script "defaults write me.mspry.MacSpoof 'LastConfigVersionUpdate' '" & latestVersion & "'"
-	end try
-end if
 if (checkFirstRun()) then
 	display dialog "For legal reasons I have to put this here, I've never had an issue but just in case:" & return & return & "The work is provided “as is”, without warranty or support, express or implied. The author(s) are not liable for any damages, misuse, or other claim, whether from or as a consequence of usage of the given work." & return & return & "Tested with OS X versions: 10.7 - 10.9 DP" & return & "With that said press OK to agree and continue" with title "MacSpoof - Disclaimer" with icon caution
 	try
@@ -110,6 +100,19 @@ if (checkFirstRun()) then
 	end try
 	try
 		do shell script "defaults write me.mspry.MacSpoof 'LastConfigVersionUpdate' '0.7'"
+	end try
+end if
+set currentVersion to do shell script "defaults read me.mspry.MacSpoof LastConfigVersionUpdate"
+if (currentVersion = latestVersion) then
+	# Do Nothing
+else
+	tell application "TextEdit"
+		activate
+		set NewDoc to make new document
+		set text of NewDoc to changelog
+	end tell
+	try
+		do shell script "defaults write me.mspry.MacSpoof 'LastConfigVersionUpdate' '" & latestVersion & "'"
 	end try
 end if
 
