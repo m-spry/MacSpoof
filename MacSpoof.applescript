@@ -1,4 +1,4 @@
-set latestVersion to "0.7.2 build 2"
+set latestVersion to "0.7.2 build 3"
 (* MacSpoof, MacAddress changer for OS X
 an automated mac spoofer that uses built in OS X terminal commands 
 
@@ -13,6 +13,7 @@ set changelog to "MacSpoof Changelog
 
 0.7.2
 - Checks against Mac Address look up command after changing to ensure it changed.
+- If Mac Address change fails, push error and try again... if fails again push error message.
 
 0.7.1 fixed.
 - Fixed a small mess up...
@@ -173,6 +174,15 @@ try
 	if (ChangeMacAddress_confirm = ChangeMacAddress_result) then
 		display dialog "Done! Your " & networkChoice & " Mac Address is now: " & return & return & ChangeMacAddress_confirm & return & return & "Please keep in mind that all changes made by this application are NOT permanent, rebooting your Mac will always restore the original Mac Address." with title "MacSpoof" buttons ("OK, Exit now")
 	else
+		display dialog "Error: Your " & networkChoice & " MacAddress has not been changed" & return & return & "Trying one more time"
+		try
+			do shell script "sudo ifconfig " & network & " " & ChangeMacAddress_result with administrator privileges
+			do shell script "sudo ifconfig " & network & " " & ChangeMacAddress_result with administrator privileges
+			do shell script "sudo ifconfig " & network & " " & ChangeMacAddress_result with administrator privileges
+			if (ChangeMacAddress_confirm = ChangeMacAddress_result) then
+				display dialog "Done! Your " & networkChoice & " Mac Address is now: " & return & return & ChangeMacAddress_confirm & return & return & "Please keep in mind that all changes made by this application are NOT permanent, rebooting your Mac will always restore the original Mac Address." with title "MacSpoof" buttons ("OK, Exit now")
+			end if
+		end try
 		display dialog "Error: Your " & networkChoice & " MacAddress has not been changed" & return & return & "If the issue persists, please contact me"
 	end if
 end try
