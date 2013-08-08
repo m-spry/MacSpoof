@@ -1,4 +1,4 @@
-set latestVersion to "0.7.2 build 4"
+set latestVersion to "0.7.2"
 (* MacSpoof, MacAddress changer for OS X
 an automated mac spoofer that uses built in OS X terminal commands 
 
@@ -149,7 +149,7 @@ if (userAnswer_Functions = "Randomize") then
 	end try
 else if (userAnswer_Functions = "Choose") then
 	try
-		display dialog "Enter the Mac Address you would like to spoof to." default answer "00:11:22:33:44:55" with icon 2 buttons {"OK"} with title "MacSpoof - " & networkChoice & " - " & userAnswer_Functions with answer
+		display dialog "Enter the Mac Address you would like to spoof to." default answer "A1:B2:C3:D4:E5:F6" with icon 2 buttons {"OK"} with title "MacSpoof - " & networkChoice & " - " & userAnswer_Functions with answer
 		set MacAddress_Choice to text returned of result
 		do shell script "echo ether " & MacAddress_Choice
 		set ChangeMacAddress_result to result
