@@ -1,12 +1,18 @@
-set latestVersion to "0.7.1"
+set latestVersion to "0.7.2 build 2"
 (* MacSpoof, MacAddress changer for OS X
 an automated mac spoofer that uses built in OS X terminal commands 
 
 Script by Madison Jack Spry.
 http://www.mspry.me/
+
+http://licence.visualidiot.com
+Basically, you’re free to do what you want with it; as long as you do something good (help someone out, smile; just be nice), you can use this on anything you fancy. Of course, if it all breaks, it’s totally not the author’s fault. Enjoy!
 *)
 set changelog to "MacSpoof Changelog
 --------------------------------------------
+
+0.7.2
+- Checks against Mac Address look up command after changing to ensure it changed.
 
 0.7.1 fixed.
 - Fixed a small mess up...
@@ -59,11 +65,6 @@ Once randomize on boot is finished I'll will call this app a complete version 1.
 - Very basic, not idiot proof... yet
 - Only works with Wi-Fi as of now
 "
-(*
-http://licence.visualidiot.com
-
-Basically, you’re free to do what you want with it; as long as you do something good (help someone out, smile; just be nice), you can use this on anything you fancy. Of course, if it all breaks, it’s totally not the author’s fault. Enjoy!
-*)
 on checkFirstRun()
 	local isPrefFileExists, prefFilePath
 	set prefFilePath to "~/Library/Preferences/me.mspry.MacSpoof.plist"
@@ -167,4 +168,11 @@ do shell script "sudo ifconfig " & network & " " & ChangeMacAddress_result with 
 do shell script "sudo ifconfig " & network & " " & ChangeMacAddress_result with administrator privileges
 do shell script "sudo ifconfig " & network & " " & ChangeMacAddress_result with administrator privileges
 
-display dialog "Done! Your " & networkChoice & " Mac Address is now: " & return & return & ChangeMacAddress_result & return & return & "Please keep in mind that all changes made by this application are NOT permanent, rebooting your Mac will always restore the original Mac Address." with title "MacSpoof" buttons ("OK, Exit now")
+try
+	set ChangeMacAddress_confirm to do shell script "ifconfig " & network & "| grep ether"
+	if (ChangeMacAddress_confirm = ChangeMacAddress_result) then
+		display dialog "Done! Your " & networkChoice & " Mac Address is now: " & return & return & ChangeMacAddress_confirm & return & return & "Please keep in mind that all changes made by this application are NOT permanent, rebooting your Mac will always restore the original Mac Address." with title "MacSpoof" buttons ("OK, Exit now")
+	else
+		display dialog "Error: Your " & networkChoice & " MacAddress has not been changed" & return & return & "If the issue persists, please contact me"
+	end if
+end try
