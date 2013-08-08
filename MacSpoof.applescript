@@ -1,4 +1,4 @@
-set latestVersion to "0.7.2 build 3"
+set latestVersion to "0.7.2 build 4"
 (* MacSpoof, MacAddress changer for OS X
 an automated mac spoofer that uses built in OS X terminal commands 
 
@@ -14,6 +14,7 @@ set changelog to "MacSpoof Changelog
 0.7.2
 - Checks against Mac Address look up command after changing to ensure it changed.
 - If Mac Address change fails, push error and try again... if fails again push error message.
+- Fixed: Title now automatically adjusts to latest version of the script... and not the currentVersion in the preference.
 
 0.7.1 fixed.
 - Fixed a small mess up...
@@ -119,7 +120,7 @@ else
 end if
 
 # Network Selection
-if button returned of (display dialog "Welcome to MacSpoof v" & currentVersion & return & "Choose which Mac Address you would like to change." buttons {"Wi-Fi", "Ethernet"} with title "MacSpoof - Welcome") is "Wi-Fi" then
+if button returned of (display dialog "Welcome to MacSpoof v" & latestVersion & return & "Choose which Mac Address you would like to change." buttons {"Wi-Fi", "Ethernet"} with title "MacSpoof - Welcome") is "Wi-Fi" then
 	set network to "en1"
 	set networkChoice to "Wi-Fi"
 else
