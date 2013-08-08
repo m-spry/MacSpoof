@@ -1,8 +1,19 @@
-(* Mac Address Spoofer v0.7, 
+set latestVersion to "0.7.1"
+(* MacSpoof, MacAddress changer for OS X
 an automated mac spoofer that uses built in OS X terminal commands 
 
-Changelog
------------
+Script by Madison Jack Spry.
+http://www.mspry.me/
+*)
+set changelog to "MacSpoof Changelog
+--------------------------------------------
+
+0.7.1
+Once randomize on boot is finished I'll will call this app a complete version 1.0
+- A bit of house keeping and clean up of previous changes
+- Nicer titles on Dialog buttons
+- Added Version Checker, will show changes after launching update (Launches in TextEdit)
+
 0.7.0
 - Now using plists for configuration, might do some cool stuff with this later.
 - Accept the disclaimer once, and never see it again. Makes the process faster!
@@ -18,7 +29,7 @@ Changelog
 0.5
 - Bit of Clean up and Organization of script source
 - Clarified messages and warnings
-- Changed closing message, removed buggy detection of "original" Mac  Address which could show a previously spoofed mac making it pointless to keep.
+- Changed closing message, removed buggy detection of 'original' Mac  Address which could show a previously spoofed mac making it pointless to keep.
 
 0.4.1
 - Changed encoding so that you can see the source code from BitBucket :D
@@ -44,42 +55,75 @@ Changelog
 - First Version
 - Very basic, not idiot proof... yet
 - Only works with Wi-Fi as of now
-
+"
+(*
 http://licence.visualidiot.com
 
 Basically, you’re free to do what you want with it; as long as you do something good (help someone out, smile; just be nice), you can use this on anything you fancy. Of course, if it all breaks, it’s totally not the author’s fault. Enjoy!
-
 *)
-#
-# Check First Run
-#
+on checkFirstRun()
+	local isPrefFileExists, prefFilePath
+	set prefFilePath to "~/Library/Preferences/me.mspry.MacSpoof.plist"
+	try
+		tell application "System Events"
+			if exists file prefFilePath then
+				set isPrefFileExists to true
+			else
+				set isPrefFileExists to false
+			end if
+		end tell
+	end try
+	return not isPrefFileExists
+end checkFirstRun
+
+# The script starts Here
+set currentVersion to do shell script "defaults read me.mspry.MacSpoof LastConfigVersionUpdate"
+if (currentVersion = latestVersion) then
+	# Do Nothing
+else
+	tell application "TextEdit"
+		activate
+		set NewDoc to make new document
+		set text of NewDoc to changelog
+	end tell
+	try
+		do shell script "defaults write me.mspry.MacSpoof 'LastConfigVersionUpdate' '" & latestVersion & "'"
+	end try
+end if
 if (checkFirstRun()) then
 	display dialog "For legal reasons I have to put this here, I've never had an issue but just in case:" & return & return & "The work is provided “as is”, without warranty or support, express or implied. The author(s) are not liable for any damages, misuse, or other claim, whether from or as a consequence of usage of the given work." & return & return & "Tested with OS X versions: 10.7 - 10.9 DP" & return & "With that said press OK to agree and continue" with title "MacSpoof - Disclaimer" with icon caution
-	
-	set userAnswer to the button returned of (display dialog "Thank You for trying MacSpoof!" & return & return & "Do you want to backup your original Mac Addresses?" & return & return & "You won't be asked this again. It is recommended that you press yes." with title "MacSpoof - First things first" with icon 1 buttons {"No", "Yes"} default button 2)
-	if (userAnswer = "Yes") then
+	try
+		-- Save Wireless Mac Address
+		do shell script "ifconfig en1 | grep ether"
+		set originalen1MacAddress to result
 		try
-			my saveOriginalMacAddresses()
+			-- Save originalen1MacAddress in the preferences.
+			do shell script "defaults write me.mspry.MacSpoof 'originalen1MacAddress' '" & originalen1MacAddress & "'"
 		end try
-	end if
+		-- Save Ethernet Mac Address
+		do shell script "ifconfig en0 | grep ether"
+		set originalen0MacAddress to result
+		try
+			-- Save originalen0MacAddress in the preferences.
+			do shell script "defaults write me.mspry.MacSpoof 'originalen0MacAddress' '" & originalen0MacAddress & "'"
+		end try
+	end try
 	try
 		do shell script "defaults write me.mspry.MacSpoof 'LastConfigVersionUpdate' '0.7'"
 	end try
 end if
-#
+
 # Network Selection
-#
-if button returned of (display dialog "Choose which Mac Address you would like to change" buttons {"Wi-Fi", "Ethernet"} with title "MacSpoof") is "Wi-Fi" then
+if button returned of (display dialog "Welcome to MacSpoof v" & currentVersion & return & "Choose which Mac Address you would like to change." buttons {"Wi-Fi", "Ethernet"} with title "MacSpoof - Welcome") is "Wi-Fi" then
 	set network to "en1"
 	set networkChoice to "Wi-Fi"
 else
 	set network to "en0"
 	set networkChoice to "Ethernet"
 end if
-#
+
 # Select Randomize, Choose, or Restore
-#
-set userAnswer_Functions to the button returned of (display dialog "Choose how you would like to change your Mac Address" buttons {"Randomize", "Choose", "Restore"} with title "MacSpoof")
+set userAnswer_Functions to the button returned of (display dialog "Choose how you would like to change your Mac Address." buttons {"Randomize", "Choose", "Restore"} with title "MacSpoof - " & networkChoice)
 if (userAnswer_Functions = "Randomize") then
 	try
 		do shell script "openssl rand -hex 1"
@@ -99,7 +143,7 @@ if (userAnswer_Functions = "Randomize") then
 	end try
 else if (userAnswer_Functions = "Choose") then
 	try
-		display dialog "Enter the Mac Address you would like to spoof to." & return & return & "Ex. 00:11:22:33:44:55" default answer "00:11:22:33:44:55" with icon 2 with title "MacSpoof - Choose" with answer
+		display dialog "Enter the Mac Address you would like to spoof to." default answer "00:11:22:33:44:55" with icon 2 buttons {"OK"} with title "MacSpoof - " & networkChoice & " - " & userAnswer_Functions with answer
 		set MacAddress_Choice to text returned of result
 		do shell script "echo ether " & MacAddress_Choice
 		set ChangeMacAddress_result to result
@@ -109,52 +153,15 @@ else if (userAnswer_Functions = "Restore") then
 		-- Get / Set the original MacAddresses
 		set ChangeMacAddress_result to do shell script "defaults read me.mspry.MacSpoof original" & network & "MacAddress"
 	on error number 1
-		display alert "You didn't save your Mac Addresses when I asked you earlier" & return & return & "Cannot continue, sorry."
+		display alert "Error: Your Mac Address does not seem have been saved"
 	end try
 end if
 
-display dialog "Your Mac Address will be changed to " & ChangeMacAddress_result & return & return & "Press OK to continue or cancel to quit." & return & "You will be prompted for your password to make changes." with title "MacSpoof - Confirmation"
+display dialog "Your Mac Address will be changed to: " & return & return & ChangeMacAddress_result & return & return & "Press OK to continue or cancel to quit and not make changes." & return & "You will be prompted for your password to make changes if you choose to proceed." with title "MacSpoof - " & networkChoice & " - Confirmation"
 
 (* This is where the Mac Address changes *)
 do shell script "sudo ifconfig " & network & " " & ChangeMacAddress_result with administrator privileges
 do shell script "sudo ifconfig " & network & " " & ChangeMacAddress_result with administrator privileges
 do shell script "sudo ifconfig " & network & " " & ChangeMacAddress_result with administrator privileges
 
-display dialog "Done! Your " & networkChoice & " Mac Address is now " & ChangeMacAddress_result & return & return & "Please keep in mind that this is not an permanent change and will revert to your original Mac Address on reboot." with title "MacSpoof" buttons ("OK, Exit now")
-
-#
-# First run and Mac Address Saving and stuff...
-# Might move these, just here for now until I figure something else out.
-#
-
-on checkFirstRun()
-	local isPrefFileExists, prefFilePath
-	set prefFilePath to "~/Library/Preferences/me.mspry.MacSpoof.plist"
-	try
-		tell application "System Events"
-			if exists file prefFilePath then
-				set isPrefFileExists to true
-			else
-				set isPrefFileExists to false
-			end if
-		end tell
-	end try
-	return not isPrefFileExists
-end checkFirstRun
-
-on saveOriginalMacAddresses()
-	-- Save Wireless
-	do shell script "ifconfig en1 | grep ether"
-	set originalen1MacAddress to result
-	try
-		-- Save originalWirelessMacAddress in the preferences.
-		do shell script "defaults write me.mspry.MacSpoof 'originalen1MacAddress' '" & originalen1MacAddress & "'"
-	end try
-	-- Save Ethernet
-	do shell script "ifconfig en0 | grep ether"
-	set originalen0MacAddress to result
-	try
-		-- Save originalEthernetMacAddress in the preferences.
-		do shell script "defaults write me.mspry.MacSpoof 'originalen0MacAddress' '" & originalen0MacAddress & "'"
-	end try
-end saveOriginalMacAddresses
+display dialog "Done! Your " & networkChoice & " Mac Address is now: " & return & return & ChangeMacAddress_result & return & return & "Please keep in mind that all changes made by this application are NOT permanent, rebooting your Mac will always restore the original Mac Address." with title "MacSpoof" buttons ("OK, Exit now")
