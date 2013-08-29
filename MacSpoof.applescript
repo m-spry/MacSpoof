@@ -1,4 +1,4 @@
-set latestVersion to "0.7.2"
+set latestVersion to "1.0"
 (* MacSpoof, MacAddress changer for OS X
 an automated mac spoofer that uses built in OS X terminal commands 
 
@@ -10,6 +10,8 @@ Basically, you’re free to do what you want with it; as long as you do something 
 *)
 set changelog to "MacSpoof Changelog
 --------------------------------------------
+1.0
+- MacSpoof is now version 1
 
 0.7.2
 - Checks against Mac Address look up command after changing to ensure it changed.
@@ -84,7 +86,7 @@ end checkFirstRun
 
 # The script starts Here
 if (checkFirstRun()) then
-	display dialog "For legal reasons I have to put this here, I've never had an issue but just in case:" & return & return & "The work is provided “as is”, without warranty or support, express or implied. The author(s) are not liable for any damages, misuse, or other claim, whether from or as a consequence of usage of the given work." & return & return & "Tested with OS X versions: 10.7 - 10.9 DP" & return & "With that said press OK to agree and continue" with title "MacSpoof - Disclaimer" with icon caution
+	display dialog "For legal reasons I have to put this here, I've never had an issue but just in case please read and agree, I won't bother you again about it." & return & return & "The work is provided “as is”, without warranty or support, express or implied. The author(s) are not liable for any damages, misuse, or other claim, whether from or as a consequence of usage of the given work." & return & return & "Tested with OS X versions: 10.7 - 10.9" & return & "With that said press OK to agree and continue" with title "MacSpoof - Disclaimer" with icon caution
 	try
 		-- Save Wireless Mac Address
 		do shell script "ifconfig en1 | grep ether"
