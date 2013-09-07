@@ -1,4 +1,4 @@
-set latestVersion to "1.0.1"
+set latestVersion to "1.0.2"
 (* MacSpoof, MacAddress changer for OS X
 an automated mac spoofer that uses built in OS X terminal commands 
 
@@ -10,6 +10,10 @@ Basically, you’re free to do what you want with it; as long as you do something 
 *)
 set changelog to "MacSpoof Changelog
 --------------------------------------------
+1.0.2
+- Toggle WiFi after change as way to make sure Mac Address changes
+- Fixed Error message going off when it shouldn't
+
 1.0
 - MacSpoof is now version 1
 
@@ -171,10 +175,13 @@ display dialog "Your Mac Address will be changed to: " & return & return & Chang
 do shell script "sudo ifconfig " & network & " " & ChangeMacAddress_result with administrator privileges
 do shell script "sudo ifconfig " & network & " " & ChangeMacAddress_result with administrator privileges
 do shell script "sudo ifconfig " & network & " " & ChangeMacAddress_result with administrator privileges
+(* Toggle WiFi *)
+do shell script "networksetup -setairportpower en1 off" with administrator privileges
+set ChangeMacAddress_confirm to do shell script "ifconfig " & network & "| grep ether"
 
 try
-	set ChangeMacAddress_confirm to do shell script "ifconfig " & network & "| grep ether"
-	if (ChangeMacAddress_confirm = ChangeMacAddress_result) then
+	do shell script "networksetup -setairportpower en1 on" with administrator privileges
+	if (ChangeMacAddress_confirm contains ChangeMacAddress_result) then
 		display dialog "Done! Your " & networkChoice & " Mac Address is now: " & return & return & ChangeMacAddress_confirm & return & return & "Please keep in mind that all changes made by this application are NOT permanent, rebooting your Mac will always restore the original Mac Address." with title "MacSpoof" buttons ("OK, Exit now")
 	else
 		display dialog "Error: Your " & networkChoice & " MacAddress has not been changed, try toggling your " & networkChoice & " on and off to ensure your Mac Address has changed" & return & return & "Otherwise click OK to try one more time"
@@ -182,7 +189,7 @@ try
 			do shell script "sudo ifconfig " & network & " " & ChangeMacAddress_result with administrator privileges
 			do shell script "sudo ifconfig " & network & " " & ChangeMacAddress_result with administrator privileges
 			do shell script "sudo ifconfig " & network & " " & ChangeMacAddress_result with administrator privileges
-			if (ChangeMacAddress_confirm = ChangeMacAddress_result) then
+			if (ChangeMacAddress_confirm contains ChangeMacAddress_result) then
 				display dialog "Done! Your " & networkChoice & " Mac Address is now: " & return & return & ChangeMacAddress_confirm & return & return & "Please keep in mind that all changes made by this application are NOT permanent, rebooting your Mac will always restore the original Mac Address." with title "MacSpoof" buttons ("OK, Exit now")
 			end if
 		end try
