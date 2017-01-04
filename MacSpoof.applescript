@@ -1,15 +1,18 @@
-set latestVersion to "1.0.2"
+set latestVersion to "1.0.3"
 (* MacSpoof, MacAddress changer for OS X
 an automated mac spoofer that uses built in OS X terminal commands 
 
-Script by Madison Jack Spry.
-http://www.mspry.me/
+Script by Madison Spry.
+http://www.mspry.net/
 
 http://licence.visualidiot.com
 Basically, you’re free to do what you want with it; as long as you do something good (help someone out, smile; just be nice), you can use this on anything you fancy. Of course, if it all breaks, it’s totally not the author’s fault. Enjoy!
-*)
-set changelog to "MacSpoof Changelog
+MacSpoof Changelog
 --------------------------------------------
+1.0.3
+- Removed the changelog pop up as it made no sense
+- Tested working up to Mac OS Sierra 10.12.2
+
 1.0.2
 - Toggle WiFi after change as way to make sure Mac Address changes
 - Fixed Error message going off when it shouldn't
@@ -72,10 +75,10 @@ Once randomize on boot is finished I'll will call this app a complete version 1.
 - First Version
 - Very basic, not idiot proof... yet
 - Only works with Wi-Fi as of now
-"
+*)
 on checkFirstRun()
 	local isPrefFileExists, prefFilePath
-	set prefFilePath to "~/Library/Preferences/me.mspry.MacSpoof.plist"
+	set prefFilePath to "~/Library/Preferences/net.mspry.MacSpoof.plist"
 	try
 		tell application "System Events"
 			if exists file prefFilePath then
@@ -90,7 +93,7 @@ end checkFirstRun
 
 # The script starts Here
 if (checkFirstRun()) then
-	display dialog "For legal reasons I have to put this here, I've never had an issue but just in case please read and agree, I won't bother you again about it." & return & return & "The work is provided “as is”, without warranty or support, express or implied. The author(s) are not liable for any damages, misuse, or other claim, whether from or as a consequence of usage of the given work." & return & return & "Tested with OS X versions: 10.7 - 10.9" & return & "With that said press OK to agree and continue" with title "MacSpoof - Disclaimer" with icon caution
+	display dialog "For legal reasons I have to put this here, I've never had an issue but just in case please read and agree, I won't bother you again about it." & return & return & "The work is provided “as is”, without warranty or support, express or implied. The author(s) are not liable for any damages, misuse, or other claim, whether from or as a consequence of usage of the given work." & return & return & "Tested with OS X versions: 10.7 - 10.12" & return & "With that said press OK to agree and continue" with title "MacSpoof - Disclaimer" with icon caution
 	try
 		-- Save Wireless Mac Address
 		do shell script "ifconfig en1 | grep ether"
@@ -115,11 +118,6 @@ set currentVersion to do shell script "defaults read me.mspry.MacSpoof LastConfi
 if (currentVersion = latestVersion) then
 	# Do Nothing
 else
-	tell application "TextEdit"
-		activate
-		set NewDoc to make new document
-		set text of NewDoc to changelog
-	end tell
 	try
 		do shell script "defaults write me.mspry.MacSpoof 'LastConfigVersionUpdate' '" & latestVersion & "'"
 	end try
